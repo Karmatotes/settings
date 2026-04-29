@@ -1,1058 +1,795 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KarmaTotes — Settings Manager</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
-<style>
-:root {
-  --primary: #1B5E20;
-  --primary-light: #4CAF50;
-  --secondary: #1565C0;
-  --accent: #F57C00;
-  --danger: #C62828;
-  --success: #2E7D32;
-  --warning: #F57F17;
-  --bg: #FAFAF8;
-  --surface: #FFFFFF;
-  --surface-alt: #F5F3F0;
-  --text-primary: #1A1A1A;
-  --text-secondary: #666666;
-  --border: #E0DCD8;
-  --border-light: #F0EEEA;
-}
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family: 'Poppins', sans-serif;
-  background: var(--bg);
-  color: var(--text-primary);
-  line-height: 1.6;
-  min-height: 100vh;
-}
-
-/* ──────────────────── HEADER ──────────────────── */
-header {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-  color: #fff;
-  padding: 24px;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-header h1 {
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 4px;
-  letter-spacing: -0.5px;
-}
-
-header p {
-  font-size: 13px;
-  opacity: 0.95;
-}
-
-.header-actions {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  justify-content: flex-end;
-  margin-top: 12px;
-}
-
-/* ──────────────────── SYNC STATUS ──────────────────── */
-.sync-bar {
-  background: var(--text-primary);
-  color: rgba(255,255,255,0.8);
-  padding: 8px 24px;
-  font-size: 12px;
-  font-family: 'IBM Plex Mono', monospace;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  height: 36px;
-  border-bottom: 1px solid var(--border);
-}
-
-.sync-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #9CA3AF;
-  flex-shrink: 0;
-  transition: background 0.3s;
-}
-
-.sync-dot.syncing {
-  background: #FBBF24;
-  animation: pulse 0.8s infinite;
-}
-
-.sync-dot.ok {
-  background: #34D399;
-}
-
-.sync-dot.err {
-  background: #F87171;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-
-.sync-text {
-  flex: 1;
-  font-weight: 500;
-}
-
-/* ──────────────────── LAYOUT ──────────────────── */
-.container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 24px;
-}
-
-.section {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 28px;
-  margin-bottom: 24px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-}
-
-.section-title {
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 6px;
-  color: var(--text-primary);
-}
-
-.section-subtitle {
-  font-size: 13px;
-  color: var(--text-secondary);
-  margin-bottom: 20px;
-  line-height: 1.5;
-}
-
-/* ──────────────────── TABS ──────────────────── */
-.tabs {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 24px;
-  border-bottom: 2px solid var(--border-light);
-  overflow-x: auto;
-}
-
-.tab {
-  padding: 12px 18px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-  background: none;
-  color: var(--text-secondary);
-  border-bottom: 3px solid transparent;
-  transition: all 0.2s;
-  white-space: nowrap;
-  font-family: 'Poppins', sans-serif;
-}
-
-.tab:hover {
-  color: var(--text-primary);
-}
-
-.tab.active {
-  color: var(--primary);
-  border-bottom-color: var(--primary);
-}
-
-.tab-content {
-  display: none;
-}
-
-.tab-content.active {
-  display: block;
-}
-
-/* ──────────────────── FORM ──────────────────── */
-.form-group {
-  margin-bottom: 16px;
-}
-
-label {
-  display: block;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--text-secondary);
-  margin-bottom: 6px;
-}
-
-input[type="text"],
-input[type="number"],
-select,
-textarea {
-  width: 100%;
-  padding: 10px 12px;
-  font-size: 13px;
-  font-family: 'Poppins', sans-serif;
-  border: 1.5px solid var(--border);
-  border-radius: 8px;
-  background: var(--surface);
-  color: var(--text-primary);
-  transition: all 0.2s;
-}
-
-input:focus,
-select:focus,
-textarea:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(27, 94, 32, 0.1);
-}
-
-textarea {
-  resize: vertical;
-  min-height: 60px;
-  font-size: 12px;
-}
-
-.form-row-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.form-row-3 {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 12px;
-}
-
-.form-hint {
-  font-size: 11px;
-  color: var(--text-secondary);
-  margin-top: 4px;
-  font-weight: 400;
-}
-
-/* ──────────────────── BUTTONS ──────────────────── */
-button {
-  font-family: 'Poppins', sans-serif;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 13px;
-  cursor: pointer;
-  transition: all 0.2s;
-  letter-spacing: 0.3px;
-}
-
-.btn-primary {
-  background: var(--primary);
-  color: #fff;
-  padding: 11px 24px;
-}
-
-.btn-primary:hover {
-  background: #134E1D;
-  box-shadow: 0 4px 12px rgba(27, 94, 32, 0.3);
-}
-
-.btn-secondary {
-  background: var(--surface-alt);
-  color: var(--text-primary);
-  padding: 10px 20px;
-  border: 1px solid var(--border);
-}
-
-.btn-secondary:hover {
-  background: var(--border-light);
-}
-
-.btn-danger {
-  background: var(--danger);
-  color: #fff;
-  padding: 10px 18px;
-  font-size: 12px;
-}
-
-.btn-danger:hover {
-  background: #A52A2A;
-}
-
-.btn-small {
-  padding: 6px 12px;
-  font-size: 11px;
-}
-
-.btn-refresh {
-  background: var(--secondary);
-  color: #fff;
-  padding: 10px 16px;
-}
-
-.btn-refresh:hover {
-  background: #0D47A1;
-}
-
-.button-group {
-  display: flex;
-  gap: 8px;
-  margin-top: 16px;
-}
-
-/* ──────────────────── TABLE ──────────────────── */
-.table-wrap {
-  overflow-x: auto;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  margin-top: 16px;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
-}
-
-thead th {
-  background: var(--surface-alt);
-  padding: 12px;
-  text-align: left;
-  font-weight: 700;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--text-secondary);
-  border-bottom: 2px solid var(--border);
-}
-
-tbody td {
-  padding: 12px;
-  border-bottom: 1px solid var(--border-light);
-  vertical-align: middle;
-}
-
-tbody tr:hover {
-  background: var(--surface-alt);
-}
-
-tbody tr:last-child td {
-  border-bottom: none;
-}
-
-.col-actions {
-  width: 100px;
-  text-align: center;
-}
-
-.col-status {
-  width: 80px;
-}
-
-/* ──────────────────── STATUS BADGE ──────────────────── */
-.badge {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-}
-
-.badge-active {
-  background: rgba(46, 125, 50, 0.15);
-  color: #2E7D32;
-}
-
-.badge-inactive {
-  background: rgba(102, 102, 102, 0.15);
-  color: #666;
-}
-
-/* ──────────────────── ITEMS LIST ──────────────────── */
-.items-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 16px;
-  margin-top: 20px;
-}
-
-.item-card {
-  background: var(--surface-alt);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 16px;
-  transition: all 0.2s;
-}
-
-.item-card:hover {
-  border-color: var(--primary);
-  box-shadow: 0 4px 12px rgba(27, 94, 32, 0.1);
-}
-
-.item-name {
-  font-weight: 700;
-  font-size: 14px;
-  margin-bottom: 8px;
-  color: var(--text-primary);
-}
-
-.item-detail {
-  font-size: 12px;
-  color: var(--text-secondary);
-  margin-bottom: 10px;
-  line-height: 1.4;
-}
-
-.item-actions {
-  display: flex;
-  gap: 6px;
-}
-
-/* ──────────────────── MODAL ──────────────────── */
-.modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 2000;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal.active {
-  display: flex;
-}
-
-.modal-content {
-  background: var(--surface);
-  border-radius: 12px;
-  padding: 28px;
-  max-width: 500px;
-  width: 90%;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  animation: slideIn 0.3s ease-out;
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.modal-header {
-  font-size: 20px;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.modal-subtitle {
-  font-size: 13px;
-  color: var(--text-secondary);
-  margin-bottom: 20px;
-}
-
-.modal-body {
-  margin-bottom: 20px;
-}
-
-.modal-footer {
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-}
-
-/* ──────────────────── TOAST ──────────────────── */
-.toast {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  background: var(--text-primary);
-  color: #fff;
-  padding: 12px 20px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  z-index: 3000;
-  transform: translateY(120px);
-  transition: transform 0.3s ease-out;
-}
-
-.toast.show {
-  transform: translateY(0);
-}
-
-.toast.success {
-  background: var(--success);
-}
-
-.toast.error {
-  background: var(--danger);
-}
-
-/* ──────────────────── EMPTY STATE ──────────────────── */
-.empty-state {
-  text-align: center;
-  padding: 40px;
-  color: var(--text-secondary);
-  font-size: 14px;
-}
-
-.empty-icon {
-  font-size: 48px;
-  margin-bottom: 12px;
-  opacity: 0.3;
-}
-
-/* ──────────────────── RESPONSIVE ──────────────────── */
-@media (max-width: 768px) {
-  .container {
-    padding: 16px;
-  }
-
-  .section {
-    padding: 20px;
-  }
-
-  .form-row-2,
-  .form-row-3 {
-    grid-template-columns: 1fr;
-  }
-
-  .items-grid {
-    grid-template-columns: 1fr;
-  }
-
-  header h1 {
-    font-size: 22px;
-  }
-
-  .modal-content {
-    width: 95%;
-  }
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KarmaTotes Settings Manager</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      padding: 30px;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 28px;
+    }
+    .subtitle { color: #666; font-size: 14px; margin-bottom: 25px; }
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 0;
+      overflow-x: auto;
+    }
+    .tab-btn {
+      padding: 12px 16px;
+      border: none;
+      background: none;
+      color: #999;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 14px;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .tab-btn.active {
+      color: #667eea;
+      border-bottom-color: #667eea;
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .section {
+      margin-bottom: 30px;
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      border-left: 4px solid #667eea;
+    }
+    .section-title {
+      font-weight: 700;
+      color: #333;
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    }
+    .table th {
+      background: #667eea;
+      color: white;
+      padding: 12px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .table td {
+      padding: 12px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 13px;
+    }
+    .table tr:hover {
+      background: #f8f9fa;
+    }
+    .table tr:last-child td {
+      border-bottom: none;
+    }
+    .btn-delete {
+      padding: 6px 10px;
+      background: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .btn-delete:hover {
+      background: #c0392b;
+    }
+    .btn-edit {
+      padding: 6px 10px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      margin-right: 6px;
+      transition: all 0.2s;
+    }
+    .btn-edit:hover {
+      background: #2980b9;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    .form-row.full {
+      grid-template-columns: 1fr;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+    .form-group label {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 6px;
+      font-size: 13px;
+    }
+    .form-control {
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+    }
+    .form-hint {
+      font-size: 12px;
+      color: #999;
+      margin-top: 4px;
+      font-style: italic;
+    }
+    .button-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .btn {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #5568d3;
+      box-shadow: 0 4px 12px rgba(102,126,234,0.3);
+    }
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #333;
+    }
+    .btn-secondary:hover {
+      background: #e0e0e0;
+    }
+    .success-msg {
+      color: #27ae60;
+      padding: 12px;
+      background: #d5f4e6;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      display: none;
+      border-left: 4px solid #27ae60;
+    }
+    .error-msg {
+      color: #e74c3c;
+      padding: 12px;
+      background: #fadbd8;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      display: none;
+      border-left: 4px solid #e74c3c;
+    }
+    .tag-input-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      background: white;
+      min-height: 40px;
+      align-items: center;
+    }
+    .tag {
+      background: #667eea;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tag-remove {
+      cursor: pointer;
+      font-weight: bold;
+      opacity: 0.7;
+    }
+    .tag-remove:hover {
+      opacity: 1;
+    }
+    .tag-input {
+      border: none;
+      outline: none;
+      flex: 1;
+      min-width: 80px;
+      font-size: 13px;
+      padding: 4px;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #999;
+    }
+    .empty-state-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      background: #f0f3ff;
+      color: #667eea;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge-designer {
+      background: #FDF4FF;
+      color: #7E22CE;
+    }
+    .info-box {
+      background: #E8F4F8;
+      border-left: 4px solid #3498db;
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      font-size: 13px;
+      color: #2c5aa0;
+    }
+    .info-box strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+  </style>
 </head>
 <body>
 
-<div class="sync-bar">
-  <div class="sync-dot" id="sync-dot"></div>
-  <span class="sync-text" id="sync-text">Connecting...</span>
-</div>
-
-<header>
-  <h1>⚙️ KarmaTotes Settings</h1>
-  <p>Master Configuration Manager</p>
-  <div class="header-actions">
-    <button class="btn-refresh" onclick="loadAllData()">↻ Load Data</button>
-  </div>
-</header>
-
 <div class="container">
+  <h1>⚙️ Settings Manager</h1>
+  <p class="subtitle">KarmaTotes Configuration & Database</p>
 
-  <div class="tabs" id="tabs">
-    <button class="tab active" onclick="switchTab('fabrics')">🧵 Fabrics</button>
-    <button class="tab" onclick="switchTab('colors')">🎨 Hardware Colors</button>
-    <button class="tab" onclick="switchTab('sizes')">📏 Hardware Sizes</button>
-    <button class="tab" onclick="switchTab('people')">👥 People</button>
-    <button class="tab" onclick="switchTab('products')">📦 Products</button>
+  <div class="success-msg" id="success-msg"></div>
+  <div class="error-msg" id="error-msg"></div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('fabrics')">🧵 Fabrics</button>
+    <button class="tab-btn" onclick="switchTab('people')">👥 People</button>
+    <button class="tab-btn" onclick="switchTab('products')">📦 Products</button>
+    <button class="tab-btn" onclick="switchTab('sync')">🔄 Sync Status</button>
   </div>
 
-  <!-- ═════════════════════ FABRICS ═════════════════════ -->
-  <div id="tab-fabrics" class="tab-content active">
+  <!-- FABRICS TAB -->
+  <div id="fabrics" class="tab-content active">
     <div class="section">
-      <div class="section-title">Add New Fabric</div>
-      <div class="section-subtitle">Add a new fabric type and configure its variations, GSM options, and available colors.</div>
+      <div class="section-title">📊 Fabric Configuration</div>
       
-      <div class="form-group">
-        <label>Fabric Name</label>
-        <input type="text" id="f-name" placeholder="e.g., Linen Blend">
+      <div class="info-box">
+        <strong>✨ NEW: Designer Fabrics</strong>
+        Designer - Kalamkari and Designer - Ikat are now available! These fabrics don't require variation/GSM selection — users just enter a custom Pattern name (e.g., "Peacock Paradise").
       </div>
-      
-      <div class="form-row-2">
-        <div class="form-group">
-          <label>Variations (comma-separated)</label>
-          <input type="text" id="f-variations" placeholder="e.g., Natural, Dyed, Printed">
+
+      <div class="table-wrap">
+        <table class="table" id="fabrics-table">
+          <thead>
+            <tr>
+              <th style="width: 25%">Fabric Name</th>
+              <th style="width: 35%">Variations</th>
+              <th style="width: 25%">GSM Options</th>
+              <th style="width: 15%">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="fabrics-tbody"></tbody>
+        </table>
+      </div>
+
+      <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #ddd;">
+        <div class="section-title" style="margin-bottom: 15px">Add New Fabric</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Fabric Name <span style="color: #e74c3c">*</span></label>
+            <input class="form-control" id="f-fabric-name" placeholder="e.g. Designer - Jacquard">
+            <div class="form-hint">Leave blank variations/GSM for Designer fabrics</div>
+          </div>
         </div>
-        <div class="form-group">
-          <label>GSM Options (comma-separated)</label>
-          <input type="text" id="f-gsm" placeholder="e.g., 200, 250, 300">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Variations (comma-separated)</label>
+            <input class="form-control" id="f-fabric-vars" placeholder="e.g. Natural, Colored, Printed">
+            <div class="form-hint">Leave blank if no variations needed</div>
+          </div>
+          <div class="form-group">
+            <label>GSM Options (comma-separated)</label>
+            <input class="form-control" id="f-fabric-gsm" placeholder="e.g. 225, 300, 400">
+            <div class="form-hint">Leave blank if no GSM selection needed</div>
+          </div>
+        </div>
+        <div class="button-row">
+          <button class="btn btn-primary" onclick="addFabric()">➕ Add Fabric</button>
         </div>
       </div>
-
-      <div class="form-group">
-        <label>Available Colors (comma-separated)</label>
-        <textarea id="f-colors" placeholder="e.g., Cream, Beige, Navy Blue, Terracotta"></textarea>
-      </div>
-
-      <div class="button-group">
-        <button class="btn-primary" onclick="addFabric()">+ Add Fabric</button>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-title">Current Fabrics</div>
-      <div id="fabrics-list"></div>
-    </div>
-  </div>
-
-  <!-- ═════════════════════ HARDWARE COLORS ═════════════════════ -->
-  <div id="tab-colors" class="tab-content">
-    <div class="section">
-      <div class="section-title">Add Hardware Colors</div>
-      <div class="section-subtitle">Add color options for zippers, lace, webbing, handles, and threads.</div>
-      
-      <div class="form-group">
-        <label>Hardware Type</label>
-        <select id="hw-color-type">
-          <option value="Zippers">Zippers</option>
-          <option value="Lace">Lace</option>
-          <option value="Webbing">Webbing</option>
-          <option value="Handles">Handles</option>
-          <option value="Threads">Threads</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label>Colors (comma-separated)</label>
-        <textarea id="hw-color-list" placeholder="e.g., Black, White, Navy Blue, Cream"></textarea>
-      </div>
-
-      <div class="button-group">
-        <button class="btn-primary" onclick="addHardwareColor()">+ Add Colors</button>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-title">Current Hardware Colors</div>
-      <div id="colors-list"></div>
     </div>
   </div>
 
-  <!-- ═════════════════════ HARDWARE SIZES ═════════════════════ -->
-  <div id="tab-sizes" class="tab-content">
+  <!-- PEOPLE TAB -->
+  <div id="people" class="tab-content">
     <div class="section">
-      <div class="section-title">Add Hardware Sizes</div>
-      <div class="section-subtitle">Configure available sizes for D-Rings, Buckles, Dog Hooks, Runners, and Zippers.</div>
-      
-      <div class="form-group">
-        <label>Hardware Type</label>
-        <select id="hw-size-type">
-          <option value="D-Ring">D-Ring</option>
-          <option value="Buckles">Buckles</option>
-          <option value="Dog Hooks">Dog Hooks</option>
-          <option value="Runners">Runners</option>
-          <option value="Zippers">Zippers</option>
-        </select>
+      <div class="section-title">👥 Team Members</div>
+
+      <div class="table-wrap">
+        <table class="table" id="people-table">
+          <thead>
+            <tr>
+              <th style="width: 30%">Name</th>
+              <th style="width: 30%">Role</th>
+              <th style="width: 40%">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="people-tbody"></tbody>
+        </table>
       </div>
 
-      <div class="form-group">
-        <label>Sizes (comma-separated)</label>
-        <textarea id="hw-size-list" placeholder="e.g., Big (1.5 inch), Medium (1 inch), Small (0.5 inch)"></textarea>
+      <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #ddd;">
+        <div class="section-title" style="margin-bottom: 15px">Add Team Member</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Name <span style="color: #e74c3c">*</span></label>
+            <input class="form-control" id="f-person-name" placeholder="Enter name">
+          </div>
+          <div class="form-group">
+            <label>Role <span style="color: #e74c3c">*</span></label>
+            <select class="form-control" id="f-person-role">
+              <option value="">Select role…</option>
+              <option value="sales">Sales Representative</option>
+              <option value="worker">Worker</option>
+              <option value="supervisor">Supervisor</option>
+              <option value="manager">Manager</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="button-row">
+          <button class="btn btn-primary" onclick="addPerson()">➕ Add Member</button>
+        </div>
       </div>
-
-      <div class="button-group">
-        <button class="btn-primary" onclick="addHardwareSize()">+ Add Sizes</button>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-title">Current Hardware Sizes</div>
-      <div id="sizes-list"></div>
     </div>
   </div>
 
-  <!-- ═════════════════════ PEOPLE ═════════════════════ -->
-  <div id="tab-people" class="tab-content">
+  <!-- PRODUCTS TAB -->
+  <div id="products" class="tab-content">
     <div class="section">
-      <div class="section-title">Add Person</div>
-      <div class="section-subtitle">Add workers, sales representatives, or other team members.</div>
-      
-      <div class="form-row-2">
-        <div class="form-group">
-          <label>Name</label>
-          <input type="text" id="p-name" placeholder="e.g., Ramesh">
+      <div class="section-title">📦 Product Types</div>
+
+      <div class="table-wrap">
+        <table class="table" id="products-table">
+          <thead>
+            <tr>
+              <th style="width: 50%">Product Name</th>
+              <th style="width: 50%">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="products-tbody"></tbody>
+        </table>
+      </div>
+
+      <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #ddd;">
+        <div class="section-title" style="margin-bottom: 15px">Add New Product</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Product Name <span style="color: #e74c3c">*</span></label>
+            <input class="form-control" id="f-product-name" placeholder="e.g. Duffle Bag, Backpack">
+          </div>
         </div>
-        <div class="form-group">
-          <label>Role</label>
-          <input type="text" id="p-role" placeholder="e.g., Stitcher, Sales Rep">
+        <div class="button-row">
+          <button class="btn btn-primary" onclick="addProduct()">➕ Add Product</button>
         </div>
       </div>
-
-      <div class="form-group">
-        <label>Type</label>
-        <select id="p-type">
-          <option value="worker">Floor Worker</option>
-          <option value="sales">Sales Representative</option>
-          <option value="supervisor">Supervisor</option>
-          <option value="other">Other</option>
-        </select>
-      </div>
-
-      <div class="button-group">
-        <button class="btn-primary" onclick="addPerson()">+ Add Person</button>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-title">Current People</div>
-      <div id="people-list"></div>
     </div>
   </div>
 
-  <!-- ═════════════════════ PRODUCTS ═════════════════════ -->
-  <div id="tab-products" class="tab-content">
+  <!-- SYNC STATUS TAB -->
+  <div id="sync" class="tab-content">
     <div class="section">
-      <div class="section-title">Add Product</div>
-      <div class="section-subtitle">Add new product types or categories.</div>
-      
-      <div class="form-row-2">
-        <div class="form-group">
-          <label>Product Name</label>
-          <input type="text" id="pr-name" placeholder="e.g., Laptop Sleeve">
-        </div>
-        <div class="form-group">
-          <label>Category</label>
-          <input type="text" id="pr-category" placeholder="e.g., Accessories">
+      <div class="section-title">🔄 Configuration Sync Status</div>
+
+      <div class="info-box">
+        <strong>How It Works</strong>
+        Settings are stored in Google Sheets and automatically synced to all Master Entry, Production Tracker, and Stock Tracker instances. When you add/edit fabrics, people, or products here, they appear in all tools within seconds.
+      </div>
+
+      <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 6px; border-left: 4px solid #27ae60;">
+        <div style="font-weight: 600; color: #27ae60; margin-bottom: 8px">✅ Connected Tools</div>
+        <ul style="list-style: none; font-size: 13px; color: #333; line-height: 1.8">
+          <li>✓ Master Entry (Orders)</li>
+          <li>✓ Production Tracker (Order Status)</li>
+          <li>✓ Stock Tracker (Inventory)</li>
+          <li>✓ Finance Tracker (Costs)</li>
+        </ul>
+      </div>
+
+      <div style="margin-top: 15px; padding: 15px; background: white; border-radius: 6px; border-left: 4px solid #667eea;">
+        <div style="font-weight: 600; color: #667eea; margin-bottom: 8px">📊 Current Configuration</div>
+        <div style="font-size: 13px; color: #333; line-height: 1.8">
+          <div>Total Fabrics: <strong id="stat-fabrics">0</strong></div>
+          <div>Team Members: <strong id="stat-people">0</strong></div>
+          <div>Product Types: <strong id="stat-products">0</strong></div>
+          <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #f0f0f0;">
+            Last Updated: <strong id="stat-updated">Loading…</strong>
+          </div>
         </div>
       </div>
 
-      <div class="button-group">
-        <button class="btn-primary" onclick="addProduct()">+ Add Product</button>
+      <div style="margin-top: 20px;">
+        <button class="btn btn-primary" onclick="refreshConfig()">🔄 Refresh Config</button>
       </div>
-    </div>
-
-    <div class="section">
-      <div class="section-title">Current Products</div>
-      <div id="products-list"></div>
-    </div>
-  </div>
-
-</div>
-
-<!-- ═════════════════════ CONFIRM MODAL ═════════════════════ -->
-<div id="confirm-modal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header">Confirm Delete</div>
-    <div class="modal-subtitle" id="confirm-message">Are you sure?</div>
-    <div class="modal-footer">
-      <button class="btn-secondary" onclick="closeConfirmModal()">Cancel</button>
-      <button class="btn-danger" onclick="confirmDelete()">Delete</button>
     </div>
   </div>
 </div>
-
-<div class="toast" id="toast"></div>
 
 <script>
-const SHEET_URL = "https://script.google.com/macros/s/AKfycbxRr3o5M_bYR3V9oZf2qMH0-Hrp13qP_PcA7h-1KddIPx6TzfMzY6KoYnTMxaa8mnSa/exec";
+  const CONFIG_URL = 'https://script.google.com/macros/s/AKfycbxRr3o5M_bYR3V9oZf2qMH0-Hrp13qP_PcA7h-1KddIPx6TzfMzY6KoYnTMxaa8mnSa/exec';
 
-let configData = {};
-let pendingDelete = null;
+  let configData = null;
 
-function setSyncStatus(state, msg) {
-  const dot = document.getElementById('sync-dot');
-  const text = document.getElementById('sync-text');
-  dot.className = 'sync-dot ' + state;
-  text.textContent = msg;
-}
+  async function initApp() {
+    await loadConfig();
+  }
 
-async function callAPI(action, body = {}) {
-  setSyncStatus('syncing', 'Syncing...');
-  try {
-    const response = await fetch(SHEET_URL, {
-      method: 'POST',
-      body: JSON.stringify({ action, ...body })
+  async function loadConfig() {
+    try {
+      const resp = await fetch(`${CONFIG_URL}?action=getConfig`);
+      const data = await resp.json();
+      if (data) {
+        configData = data;
+        renderFabrics();
+        renderPeople();
+        renderProducts();
+        updateStats();
+      }
+    } catch (err) {
+      showError('Failed to load config: ' + err.message);
+      console.error('Load error:', err);
+    }
+  }
+
+  function renderFabrics() {
+    const tbody = document.getElementById('fabrics-tbody');
+    tbody.innerHTML = '';
+
+    if (!configData || !configData.fabrics || configData.fabrics.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#999;padding:30px">No fabrics configured</td></tr>';
+      return;
+    }
+
+    configData.fabrics.forEach((fab, idx) => {
+      const tr = document.createElement('tr');
+      
+      const isDesigner = fab.name.includes('Designer');
+      const nameBadge = isDesigner ? `<span class="badge badge-designer">✨ ${fab.name}</span>` : `<strong>${fab.name}</strong>`;
+      
+      tr.innerHTML = `
+        <td>${nameBadge}</td>
+        <td>${fab.variations && fab.variations.length > 0 ? fab.variations.join(', ') : '—'}</td>
+        <td>${fab.gsm && fab.gsm.length > 0 ? fab.gsm.join(', ') : '—'}</td>
+        <td>
+          <button class="btn-edit" onclick="editFabric(${idx})">Edit</button>
+          <button class="btn-delete" onclick="deleteFabric(${idx})">Delete</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
     });
-    const data = await response.json();
-    if (data.error) throw new Error(data.error);
-    setSyncStatus('ok', 'Synced');
-    return data;
-  } catch (err) {
-    setSyncStatus('err', 'Error: ' + err.message);
-    showToast(err.message, 'error');
-    return null;
   }
-}
 
-async function loadAllData() {
-  setSyncStatus('syncing', 'Loading...');
-  try {
-    const response = await fetch(SHEET_URL + '?action=getConfig');
-    configData = await response.json();
-    renderAllLists();
-    setSyncStatus('ok', 'Loaded');
-    showToast('Data loaded', 'success');
-  } catch (err) {
-    setSyncStatus('err', 'Load failed');
-    showToast('Failed to load data', 'error');
+  function renderPeople() {
+    const tbody = document.getElementById('people-tbody');
+    tbody.innerHTML = '';
+
+    if (!configData || !configData.people || configData.people.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#999;padding:30px">No team members configured</td></tr>';
+      return;
+    }
+
+    configData.people.forEach((person, idx) => {
+      const tr = document.createElement('tr');
+      const roleLabel = {
+        'sales': '💼 Sales Rep',
+        'worker': '🔧 Worker',
+        'supervisor': '👨‍💼 Supervisor',
+        'manager': '👔 Manager',
+        'other': '👤 Other'
+      }[person.type] || person.type;
+
+      tr.innerHTML = `
+        <td><strong>${person.name}</strong></td>
+        <td>${roleLabel}</td>
+        <td>
+          <button class="btn-edit" onclick="editPerson(${idx})">Edit</button>
+          <button class="btn-delete" onclick="deletePerson(${idx})">Delete</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
   }
-}
 
-// ════ TAB SWITCHING ════
-function switchTab(tab) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-  event.target.classList.add('active');
-  document.getElementById('tab-' + tab).classList.add('active');
-}
+  function renderProducts() {
+    const tbody = document.getElementById('products-tbody');
+    tbody.innerHTML = '';
 
-// ════ FABRICS ════
-async function addFabric() {
-  const name = document.getElementById('f-name').value.trim();
-  const variations = document.getElementById('f-variations').value.trim();
-  const gsm = document.getElementById('f-gsm').value.trim();
-  const colors = document.getElementById('f-colors').value.trim();
+    if (!configData || !configData.products || configData.products.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;color:#999;padding:30px">No products configured</td></tr>';
+      return;
+    }
 
-  if (!name) { showToast('Enter fabric name', 'error'); return; }
-
-  const result = await callAPI('addFabric', {
-    name,
-    variations: variations ? variations.split(',').map(s => s.trim()) : [],
-    gsm: gsm ? gsm.split(',').map(s => s.trim()) : [],
-    colors: colors ? colors.split(',').map(s => s.trim()) : []
-  });
-
-  if (result) {
-    document.getElementById('f-name').value = '';
-    document.getElementById('f-variations').value = '';
-    document.getElementById('f-gsm').value = '';
-    document.getElementById('f-colors').value = '';
-    await loadAllData();
-    showToast(result.message, 'success');
+    configData.products.forEach((prod, idx) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><strong>${prod.name}</strong></td>
+        <td>
+          <button class="btn-edit" onclick="editProduct(${idx})">Edit</button>
+          <button class="btn-delete" onclick="deleteProduct(${idx})">Delete</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
   }
-}
 
-function renderFabrics() {
-  const list = document.getElementById('fabrics-list');
-  const fabrics = configData.fabrics || [];
-  if (!fabrics.length) {
-    list.innerHTML = '<div class="empty-state"><div class="empty-icon">🧵</div>No fabrics configured yet</div>';
-    return;
+  async function addFabric() {
+    const name = document.getElementById('f-fabric-name').value.trim();
+    if (!name) {
+      showError('Please enter fabric name');
+      return;
+    }
+
+    const varsInput = document.getElementById('f-fabric-vars').value.trim();
+    const gsmInput = document.getElementById('f-fabric-gsm').value.trim();
+
+    const variations = varsInput ? varsInput.split(',').map(v => v.trim()).filter(v => v) : [];
+    const gsm = gsmInput ? gsmInput.split(',').map(g => g.trim()).filter(g => g) : [];
+
+    try {
+      const resp = await fetch(CONFIG_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+          action: 'addFabric',
+          name: name,
+          variations: variations,
+          gsm: gsm
+        })
+      });
+      const data = await resp.json();
+      if (data.success) {
+        showSuccess('✅ Fabric added successfully!');
+        document.getElementById('f-fabric-name').value = '';
+        document.getElementById('f-fabric-vars').value = '';
+        document.getElementById('f-fabric-gsm').value = '';
+        await loadConfig();
+      } else {
+        showError('Error: ' + (data.error || 'Unknown error'));
+      }
+    } catch (err) {
+      showError('Error: ' + err.message);
+    }
   }
-  list.innerHTML = fabrics.map(f => `
-    <div class="item-card">
-      <div class="item-name">${f.name}</div>
-      <div class="item-detail">
-        <strong>Variations:</strong> ${f.variations.join(', ') || 'None'}<br>
-        <strong>GSM:</strong> ${f.gsm.join(', ') || 'None'}<br>
-        <strong>Colors:</strong> ${f.colors.slice(0, 3).join(', ')}${f.colors.length > 3 ? '...' : ''}
-      </div>
-      <div class="item-actions">
-        <button class="btn-danger btn-small" onclick="confirmDeleteItem('Config - Fabrics', '${f.name}')">Delete</button>
-      </div>
-    </div>
-  `).join('');
-}
 
-// ════ HARDWARE COLORS ════
-async function addHardwareColor() {
-  const type = document.getElementById('hw-color-type').value;
-  const colors = document.getElementById('hw-color-list').value.trim();
+  function deleteFabric(idx) {
+    if (!confirm('Are you sure? This cannot be undone.')) return;
 
-  if (!colors) { showToast('Enter at least one color', 'error'); return; }
-
-  const result = await callAPI('addHardwareColor', {
-    type,
-    colors: colors.split(',').map(s => s.trim())
-  });
-
-  if (result) {
-    document.getElementById('hw-color-list').value = '';
-    await loadAllData();
-    showToast(result.message, 'success');
+    fetch(CONFIG_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'deleteFabric',
+        index: idx
+      })
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        showSuccess('✅ Fabric deleted');
+        loadConfig();
+      } else {
+        showError('Error: ' + (data.error || 'Unknown'));
+      }
+    })
+    .catch(err => showError('Error: ' + err.message));
   }
-}
 
-function renderColors() {
-  const list = document.getElementById('colors-list');
-  const colors = configData.hardwareColors || [];
-  if (!colors.length) {
-    list.innerHTML = '<div class="empty-state"><div class="empty-icon">🎨</div>No hardware colors configured yet</div>';
-    return;
+  function editFabric(idx) {
+    const fab = configData.fabrics[idx];
+    document.getElementById('f-fabric-name').value = fab.name;
+    document.getElementById('f-fabric-vars').value = (fab.variations || []).join(', ');
+    document.getElementById('f-fabric-gsm').value = (fab.gsm || []).join(', ');
   }
-  list.innerHTML = colors.map(c => `
-    <div class="item-card">
-      <div class="item-name">${c.type}</div>
-      <div class="item-detail">${c.colors.join(', ')}</div>
-      <div class="item-actions">
-        <button class="btn-danger btn-small" onclick="confirmDeleteItem('Config - Hardware Colors', '${c.type}')">Delete</button>
-      </div>
-    </div>
-  `).join('');
-}
 
-// ════ HARDWARE SIZES ════
-async function addHardwareSize() {
-  const type = document.getElementById('hw-size-type').value;
-  const sizes = document.getElementById('hw-size-list').value.trim();
+  async function addPerson() {
+    const name = document.getElementById('f-person-name').value.trim();
+    const role = document.getElementById('f-person-role').value;
 
-  if (!sizes) { showToast('Enter at least one size', 'error'); return; }
+    if (!name || !role) {
+      showError('Please fill in all fields');
+      return;
+    }
 
-  const result = await callAPI('addHardwareSize', {
-    type,
-    sizes: sizes.split(',').map(s => s.trim())
-  });
-
-  if (result) {
-    document.getElementById('hw-size-list').value = '';
-    await loadAllData();
-    showToast(result.message, 'success');
+    try {
+      const resp = await fetch(CONFIG_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+          action: 'addPerson',
+          name: name,
+          type: role
+        })
+      });
+      const data = await resp.json();
+      if (data.success) {
+        showSuccess('✅ Team member added!');
+        document.getElementById('f-person-name').value = '';
+        document.getElementById('f-person-role').value = '';
+        await loadConfig();
+      } else {
+        showError('Error: ' + (data.error || 'Unknown error'));
+      }
+    } catch (err) {
+      showError('Error: ' + err.message);
+    }
   }
-}
 
-function renderSizes() {
-  const list = document.getElementById('sizes-list');
-  const sizes = configData.hardwareSizes || [];
-  if (!sizes.length) {
-    list.innerHTML = '<div class="empty-state"><div class="empty-icon">📏</div>No hardware sizes configured yet</div>';
-    return;
+  function deletePerson(idx) {
+    if (!confirm('Are you sure? This cannot be undone.')) return;
+
+    fetch(CONFIG_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'deletePerson',
+        index: idx
+      })
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        showSuccess('✅ Team member deleted');
+        loadConfig();
+      } else {
+        showError('Error: ' + (data.error || 'Unknown'));
+      }
+    })
+    .catch(err => showError('Error: ' + err.message));
   }
-  list.innerHTML = sizes.map(s => `
-    <div class="item-card">
-      <div class="item-name">${s.type}</div>
-      <div class="item-detail">${s.sizes.join(', ')}</div>
-      <div class="item-actions">
-        <button class="btn-danger btn-small" onclick="confirmDeleteItem('Config - Hardware Sizes', '${s.type}')">Delete</button>
-      </div>
-    </div>
-  `).join('');
-}
 
-// ════ PEOPLE ════
-async function addPerson() {
-  const name = document.getElementById('p-name').value.trim();
-  const role = document.getElementById('p-role').value.trim();
-  const type = document.getElementById('p-type').value;
-
-  if (!name) { showToast('Enter name', 'error'); return; }
-
-  const result = await callAPI('addPerson', { name, role, type });
-
-  if (result) {
-    document.getElementById('p-name').value = '';
-    document.getElementById('p-role').value = '';
-    await loadAllData();
-    showToast(result.message, 'success');
+  function editPerson(idx) {
+    const person = configData.people[idx];
+    document.getElementById('f-person-name').value = person.name;
+    document.getElementById('f-person-role').value = person.type;
   }
-}
 
-function renderPeople() {
-  const list = document.getElementById('people-list');
-  const people = configData.people || [];
-  if (!people.length) {
-    list.innerHTML = '<div class="empty-state"><div class="empty-icon">👥</div>No people configured yet</div>';
-    return;
+  async function addProduct() {
+    const name = document.getElementById('f-product-name').value.trim();
+    if (!name) {
+      showError('Please enter product name');
+      return;
+    }
+
+    try {
+      const resp = await fetch(CONFIG_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+          action: 'addProduct',
+          name: name
+        })
+      });
+      const data = await resp.json();
+      if (data.success) {
+        showSuccess('✅ Product added!');
+        document.getElementById('f-product-name').value = '';
+        await loadConfig();
+      } else {
+        showError('Error: ' + (data.error || 'Unknown error'));
+      }
+    } catch (err) {
+      showError('Error: ' + err.message);
+    }
   }
-  list.innerHTML = people.map(p => `
-    <div class="item-card">
-      <div class="item-name">${p.name}</div>
-      <div class="item-detail">
-        <strong>Role:</strong> ${p.role}<br>
-        <span class="badge ${p.type === 'sales' ? 'badge-active' : ''}">${p.type}</span>
-      </div>
-      <div class="item-actions">
-        <button class="btn-danger btn-small" onclick="confirmDeleteItem('Config - People', '${p.name}')">Delete</button>
-      </div>
-    </div>
-  `).join('');
-}
 
-// ════ PRODUCTS ════
-async function addProduct() {
-  const name = document.getElementById('pr-name').value.trim();
-  const category = document.getElementById('pr-category').value.trim();
+  function deleteProduct(idx) {
+    if (!confirm('Are you sure? This cannot be undone.')) return;
 
-  if (!name) { showToast('Enter product name', 'error'); return; }
-
-  const result = await callAPI('addProduct', { name, category });
-
-  if (result) {
-    document.getElementById('pr-name').value = '';
-    document.getElementById('pr-category').value = '';
-    await loadAllData();
-    showToast(result.message, 'success');
+    fetch(CONFIG_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'deleteProduct',
+        index: idx
+      })
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        showSuccess('✅ Product deleted');
+        loadConfig();
+      } else {
+        showError('Error: ' + (data.error || 'Unknown'));
+      }
+    })
+    .catch(err => showError('Error: ' + err.message));
   }
-}
 
-function renderProducts() {
-  const list = document.getElementById('products-list');
-  const products = configData.products || [];
-  if (!products.length) {
-    list.innerHTML = '<div class="empty-state"><div class="empty-icon">📦</div>No products configured yet</div>';
-    return;
+  function editProduct(idx) {
+    const prod = configData.products[idx];
+    document.getElementById('f-product-name').value = prod.name;
   }
-  list.innerHTML = products.map(p => `
-    <div class="item-card">
-      <div class="item-name">${p.name}</div>
-      <div class="item-detail"><strong>Category:</strong> ${p.category}</div>
-      <div class="item-actions">
-        <button class="btn-danger btn-small" onclick="confirmDeleteItem('Config - Products', '${p.name}')">Delete</button>
-      </div>
-    </div>
-  `).join('');
-}
 
-// ════ RENDER ALL ════
-function renderAllLists() {
-  renderFabrics();
-  renderColors();
-  renderSizes();
-  renderPeople();
-  renderProducts();
-}
-
-// ════ DELETE ════
-function confirmDeleteItem(sheetName, name) {
-  pendingDelete = { sheetName, name };
-  document.getElementById('confirm-message').textContent = `Delete "${name}"? This cannot be undone.`;
-  document.getElementById('confirm-modal').classList.add('active');
-}
-
-function closeConfirmModal() {
-  document.getElementById('confirm-modal').classList.remove('active');
-  pendingDelete = null;
-}
-
-async function confirmDelete() {
-  if (!pendingDelete) return;
-  const result = await callAPI('deleteConfigItem', pendingDelete);
-  if (result) {
-    await loadAllData();
-    showToast(result.message, 'success');
+  function updateStats() {
+    document.getElementById('stat-fabrics').textContent = (configData.fabrics || []).length;
+    document.getElementById('stat-people').textContent = (configData.people || []).length;
+    document.getElementById('stat-products').textContent = (configData.products || []).length;
+    document.getElementById('stat-updated').textContent = new Date().toLocaleString();
   }
-  closeConfirmModal();
-}
 
-// ════ TOAST ════
-function showToast(msg, type = 'success') {
-  const toast = document.getElementById('toast');
-  toast.textContent = msg;
-  toast.className = 'toast ' + type + ' show';
-  setTimeout(() => toast.classList.remove('show'), 3200);
-}
+  function refreshConfig() {
+    loadConfig();
+    showSuccess('✅ Config refreshed');
+  }
 
-// Init
-loadAllData();
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(tab).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  function showSuccess(msg) {
+    const el = document.getElementById('success-msg');
+    el.textContent = msg;
+    el.style.display = 'block';
+    setTimeout(() => el.style.display = 'none', 3000);
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('error-msg');
+    el.textContent = msg;
+    el.style.display = 'block';
+    setTimeout(() => el.style.display = 'none', 4000);
+  }
+
+  // Initialize
+  initApp();
 </script>
+
 </body>
 </html>
