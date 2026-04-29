@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KarmaTotes — Settings Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #1B5E20;
+  --primary-light: #4CAF50;
+  --secondary: #1565C0;
+  --accent: #F57C00;
+  --danger: #C62828;
+  --success: #2E7D32;
+  --warning: #F57F17;
+  --bg: #FAFAF8;
+  --surface: #FFFFFF;
+  --surface-alt: #F5F3F0;
+  --text-primary: #1A1A1A;
+  --text-secondary: #666666;
+  --border: #E0DCD8;
+  --border-light: #F0EEEA;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ──────────────────── HEADER ──────────────────── */
+header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: #fff;
+  padding: 24px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  letter-spacing: -0.5px;
+}
+
+header p {
+  font-size: 13px;
+  opacity: 0.95;
+}
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+/* ──────────────────── SYNC STATUS ──────────────────── */
+.sync-bar {
+  background: var(--text-primary);
+  color: rgba(255,255,255,0.8);
+  padding: 8px 24px;
+  font-size: 12px;
+  font-family: 'IBM Plex Mono', monospace;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sync-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #9CA3AF;
+  flex-shrink: 0;
+  transition: background 0.3s;
+}
+
+.sync-dot.syncing {
+  background: #FBBF24;
+  animation: pulse 0.8s infinite;
+}
+
+.sync-dot.ok {
+  background: #34D399;
+}
+
+.sync-dot.err {
+  background: #F87171;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.sync-text {
+  flex: 1;
+  font-weight: 500;
+}
+
+/* ──────────────────── LAYOUT ──────────────────── */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--text-primary);
+}
+
+.section-subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+/* ──────────────────── TABS ──────────────────── */
+.tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  border-bottom: 2px solid var(--border-light);
+  overflow-x: auto;
+}
+
+.tab {
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: var(--text-secondary);
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+  font-family: 'Poppins', sans-serif;
+}
+
+.tab:hover {
+  color: var(--text-primary);
+}
+
+.tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* ──────────────────── FORM ──────────────────── */
+.form-group {
+  margin-bottom: 16px;
+}
+
+label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-family: 'Poppins', sans-serif;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text-primary);
+  transition: all 0.2s;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(27, 94, 32, 0.1);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 60px;
+  font-size: 12px;
+}
+
+.form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.form-row-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+.form-hint {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  font-weight: 400;
+}
+
+/* ──────────────────── BUTTONS ──────────────────── */
+button {
+  font-family: 'Poppins', sans-serif;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+  padding: 11px 24px;
+}
+
+.btn-primary:hover {
+  background: #134E1D;
+  box-shadow: 0 4px 12px rgba(27, 94, 32, 0.3);
+}
+
+.btn-secondary {
+  background: var(--surface-alt);
+  color: var(--text-primary);
+  padding: 10px 20px;
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+  background: var(--border-light);
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: #fff;
+  padding: 10px 18px;
+  font-size: 12px;
+}
+
+.btn-danger:hover {
+  background: #A52A2A;
+}
+
+.btn-small {
+  padding: 6px 12px;
+  font-size: 11px;
+}
+
+.btn-refresh {
+  background: var(--secondary);
+  color: #fff;
+  padding: 10px 16px;
+}
+
+.btn-refresh:hover {
+  background: #0D47A1;
+}
+
+.button-group {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+/* ──────────────────── TABLE ──────────────────── */
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-top: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+thead th {
+  background: var(--surface-alt);
+  padding: 12px;
+  text-align: left;
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  border-bottom: 2px solid var(--border);
+}
+
+tbody td {
+  padding: 12px;
+  border-bottom: 1px solid var(--border-light);
+  vertical-align: middle;
+}
+
+tbody tr:hover {
+  background: var(--surface-alt);
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.col-actions {
+  width: 100px;
+  text-align: center;
+}
+
+.col-status {
+  width: 80px;
+}
+
+/* ──────────────────── STATUS BADGE ──────────────────── */
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.badge-active {
+  background: rgba(46, 125, 50, 0.15);
+  color: #2E7D32;
+}
+
+.badge-inactive {
+  background: rgba(102, 102, 102, 0.15);
+  color: #666;
+}
+
+/* ──────────────────── ITEMS LIST ──────────────────── */
+.items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.item-card {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  transition: all 0.2s;
+}
+
+.item-card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(27, 94, 32, 0.1);
+}
+
+.item-name {
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+
+.item-detail {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.item-actions {
+  display: flex;
+  gap: 6px;
+}
+
+/* ──────────────────── MODAL ──────────────────── */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal.active {
+  display: flex;
+}
+
+.modal-content {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 28px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modal-header {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.modal-subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}
+
+.modal-body {
+  margin-bottom: 20px;
+}
+
+.modal-footer {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+/* ──────────────────── TOAST ──────────────────── */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--text-primary);
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  z-index: 3000;
+  transform: translateY(120px);
+  transition: transform 0.3s ease-out;
+}
+
+.toast.show {
+  transform: translateY(0);
+}
+
+.toast.success {
+  background: var(--success);
+}
+
+.toast.error {
+  background: var(--danger);
+}
+
+/* ──────────────────── EMPTY STATE ──────────────────── */
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+  opacity: 0.3;
+}
+
+/* ──────────────────── RESPONSIVE ──────────────────── */
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+
+  .section {
+    padding: 20px;
+  }
+
+  .form-row-2,
+  .form-row-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .items-grid {
+    grid-template-columns: 1fr;
+  }
+
+  header h1 {
+    font-size: 22px;
+  }
+
+  .modal-content {
+    width: 95%;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="sync-bar">
+  <div class="sync-dot" id="sync-dot"></div>
+  <span class="sync-text" id="sync-text">Connecting...</span>
+</div>
+
+<header>
+  <h1>⚙️ KarmaTotes Settings</h1>
+  <p>Master Configuration Manager</p>
+  <div class="header-actions">
+    <button class="btn-refresh" onclick="loadAllData()">↻ Load Data</button>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="tabs" id="tabs">
+    <button class="tab active" onclick="switchTab('fabrics')">🧵 Fabrics</button>
+    <button class="tab" onclick="switchTab('colors')">🎨 Hardware Colors</button>
+    <button class="tab" onclick="switchTab('sizes')">📏 Hardware Sizes</button>
+    <button class="tab" onclick="switchTab('people')">👥 People</button>
+    <button class="tab" onclick="switchTab('products')">📦 Products</button>
+  </div>
+
+  <!-- ═════════════════════ FABRICS ═════════════════════ -->
+  <div id="tab-fabrics" class="tab-content active">
+    <div class="section">
+      <div class="section-title">Add New Fabric</div>
+      <div class="section-subtitle">Add a new fabric type and configure its variations, GSM options, and available colors.</div>
+      
+      <div class="form-group">
+        <label>Fabric Name</label>
+        <input type="text" id="f-name" placeholder="e.g., Linen Blend">
+      </div>
+      
+      <div class="form-row-2">
+        <div class="form-group">
+          <label>Variations (comma-separated)</label>
+          <input type="text" id="f-variations" placeholder="e.g., Natural, Dyed, Printed">
+        </div>
+        <div class="form-group">
+          <label>GSM Options (comma-separated)</label>
+          <input type="text" id="f-gsm" placeholder="e.g., 200, 250, 300">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Available Colors (comma-separated)</label>
+        <textarea id="f-colors" placeholder="e.g., Cream, Beige, Navy Blue, Terracotta"></textarea>
+      </div>
+
+      <div class="button-group">
+        <button class="btn-primary" onclick="addFabric()">+ Add Fabric</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Current Fabrics</div>
+      <div id="fabrics-list"></div>
+    </div>
+  </div>
+
+  <!-- ═════════════════════ HARDWARE COLORS ═════════════════════ -->
+  <div id="tab-colors" class="tab-content">
+    <div class="section">
+      <div class="section-title">Add Hardware Colors</div>
+      <div class="section-subtitle">Add color options for zippers, lace, webbing, handles, and threads.</div>
+      
+      <div class="form-group">
+        <label>Hardware Type</label>
+        <select id="hw-color-type">
+          <option value="Zippers">Zippers</option>
+          <option value="Lace">Lace</option>
+          <option value="Webbing">Webbing</option>
+          <option value="Handles">Handles</option>
+          <option value="Threads">Threads</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Colors (comma-separated)</label>
+        <textarea id="hw-color-list" placeholder="e.g., Black, White, Navy Blue, Cream"></textarea>
+      </div>
+
+      <div class="button-group">
+        <button class="btn-primary" onclick="addHardwareColor()">+ Add Colors</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Current Hardware Colors</div>
+      <div id="colors-list"></div>
+    </div>
+  </div>
+
+  <!-- ═════════════════════ HARDWARE SIZES ═════════════════════ -->
+  <div id="tab-sizes" class="tab-content">
+    <div class="section">
+      <div class="section-title">Add Hardware Sizes</div>
+      <div class="section-subtitle">Configure available sizes for D-Rings, Buckles, Dog Hooks, Runners, and Zippers.</div>
+      
+      <div class="form-group">
+        <label>Hardware Type</label>
+        <select id="hw-size-type">
+          <option value="D-Ring">D-Ring</option>
+          <option value="Buckles">Buckles</option>
+          <option value="Dog Hooks">Dog Hooks</option>
+          <option value="Runners">Runners</option>
+          <option value="Zippers">Zippers</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Sizes (comma-separated)</label>
+        <textarea id="hw-size-list" placeholder="e.g., Big (1.5 inch), Medium (1 inch), Small (0.5 inch)"></textarea>
+      </div>
+
+      <div class="button-group">
+        <button class="btn-primary" onclick="addHardwareSize()">+ Add Sizes</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Current Hardware Sizes</div>
+      <div id="sizes-list"></div>
+    </div>
+  </div>
+
+  <!-- ═════════════════════ PEOPLE ═════════════════════ -->
+  <div id="tab-people" class="tab-content">
+    <div class="section">
+      <div class="section-title">Add Person</div>
+      <div class="section-subtitle">Add workers, sales representatives, or other team members.</div>
+      
+      <div class="form-row-2">
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" id="p-name" placeholder="e.g., Ramesh">
+        </div>
+        <div class="form-group">
+          <label>Role</label>
+          <input type="text" id="p-role" placeholder="e.g., Stitcher, Sales Rep">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Type</label>
+        <select id="p-type">
+          <option value="worker">Floor Worker</option>
+          <option value="sales">Sales Representative</option>
+          <option value="supervisor">Supervisor</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <div class="button-group">
+        <button class="btn-primary" onclick="addPerson()">+ Add Person</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Current People</div>
+      <div id="people-list"></div>
+    </div>
+  </div>
+
+  <!-- ═════════════════════ PRODUCTS ═════════════════════ -->
+  <div id="tab-products" class="tab-content">
+    <div class="section">
+      <div class="section-title">Add Product</div>
+      <div class="section-subtitle">Add new product types or categories.</div>
+      
+      <div class="form-row-2">
+        <div class="form-group">
+          <label>Product Name</label>
+          <input type="text" id="pr-name" placeholder="e.g., Laptop Sleeve">
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <input type="text" id="pr-category" placeholder="e.g., Accessories">
+        </div>
+      </div>
+
+      <div class="button-group">
+        <button class="btn-primary" onclick="addProduct()">+ Add Product</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Current Products</div>
+      <div id="products-list"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═════════════════════ CONFIRM MODAL ═════════════════════ -->
+<div id="confirm-modal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">Confirm Delete</div>
+    <div class="modal-subtitle" id="confirm-message">Are you sure?</div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeConfirmModal()">Cancel</button>
+      <button class="btn-danger" onclick="confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbyxiGyH2pcyDxfF0rv2r49Tm5XpDZFeKIrhtc3ktSVMrhS6tXQhTYq38DaPTondxDED/exec";
+
+let configData = {};
+let pendingDelete = null;
+
+function setSyncStatus(state, msg) {
+  const dot = document.getElementById('sync-dot');
+  const text = document.getElementById('sync-text');
+  dot.className = 'sync-dot ' + state;
+  text.textContent = msg;
+}
+
+async function callAPI(action, body = {}) {
+  setSyncStatus('syncing', 'Syncing...');
+  try {
+    const response = await fetch(SHEET_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action, ...body })
+    });
+    const data = await response.json();
+    if (data.error) throw new Error(data.error);
+    setSyncStatus('ok', 'Synced');
+    return data;
+  } catch (err) {
+    setSyncStatus('err', 'Error: ' + err.message);
+    showToast(err.message, 'error');
+    return null;
+  }
+}
+
+async function loadAllData() {
+  setSyncStatus('syncing', 'Loading...');
+  try {
+    const response = await fetch(SHEET_URL + '?action=getConfig');
+    configData = await response.json();
+    renderAllLists();
+    setSyncStatus('ok', 'Loaded');
+    showToast('Data loaded', 'success');
+  } catch (err) {
+    setSyncStatus('err', 'Load failed');
+    showToast('Failed to load data', 'error');
+  }
+}
+
+// ════ TAB SWITCHING ════
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+}
+
+// ════ FABRICS ════
+async function addFabric() {
+  const name = document.getElementById('f-name').value.trim();
+  const variations = document.getElementById('f-variations').value.trim();
+  const gsm = document.getElementById('f-gsm').value.trim();
+  const colors = document.getElementById('f-colors').value.trim();
+
+  if (!name) { showToast('Enter fabric name', 'error'); return; }
+
+  const result = await callAPI('addFabric', {
+    name,
+    variations: variations ? variations.split(',').map(s => s.trim()) : [],
+    gsm: gsm ? gsm.split(',').map(s => s.trim()) : [],
+    colors: colors ? colors.split(',').map(s => s.trim()) : []
+  });
+
+  if (result) {
+    document.getElementById('f-name').value = '';
+    document.getElementById('f-variations').value = '';
+    document.getElementById('f-gsm').value = '';
+    document.getElementById('f-colors').value = '';
+    await loadAllData();
+    showToast(result.message, 'success');
+  }
+}
+
+function renderFabrics() {
+  const list = document.getElementById('fabrics-list');
+  const fabrics = configData.fabrics || [];
+  if (!fabrics.length) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">🧵</div>No fabrics configured yet</div>';
+    return;
+  }
+  list.innerHTML = fabrics.map(f => `
+    <div class="item-card">
+      <div class="item-name">${f.name}</div>
+      <div class="item-detail">
+        <strong>Variations:</strong> ${f.variations.join(', ') || 'None'}<br>
+        <strong>GSM:</strong> ${f.gsm.join(', ') || 'None'}<br>
+        <strong>Colors:</strong> ${f.colors.slice(0, 3).join(', ')}${f.colors.length > 3 ? '...' : ''}
+      </div>
+      <div class="item-actions">
+        <button class="btn-danger btn-small" onclick="confirmDeleteItem('Config - Fabrics', '${f.name}')">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ════ HARDWARE COLORS ════
+async function addHardwareColor() {
+  const type = document.getElementById('hw-color-type').value;
+  const colors = document.getElementById('hw-color-list').value.trim();
+
+  if (!colors) { showToast('Enter at least one color', 'error'); return; }
+
+  const result = await callAPI('addHardwareColor', {
+    type,
+    colors: colors.split(',').map(s => s.trim())
+  });
+
+  if (result) {
+    document.getElementById('hw-color-list').value = '';
+    await loadAllData();
+    showToast(result.message, 'success');
+  }
+}
+
+function renderColors() {
+  const list = document.getElementById('colors-list');
+  const colors = configData.hardwareColors || [];
+  if (!colors.length) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">🎨</div>No hardware colors configured yet</div>';
+    return;
+  }
+  list.innerHTML = colors.map(c => `
+    <div class="item-card">
+      <div class="item-name">${c.type}</div>
+      <div class="item-detail">${c.colors.join(', ')}</div>
+      <div class="item-actions">
+        <button class="btn-danger btn-small" onclick="confirmDeleteItem('Config - Hardware Colors', '${c.type}')">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ════ HARDWARE SIZES ════
+async function addHardwareSize() {
+  const type = document.getElementById('hw-size-type').value;
+  const sizes = document.getElementById('hw-size-list').value.trim();
+
+  if (!sizes) { showToast('Enter at least one size', 'error'); return; }
+
+  const result = await callAPI('addHardwareSize', {
+    type,
+    sizes: sizes.split(',').map(s => s.trim())
+  });
+
+  if (result) {
+    document.getElementById('hw-size-list').value = '';
+    await loadAllData();
+    showToast(result.message, 'success');
+  }
+}
+
+function renderSizes() {
+  const list = document.getElementById('sizes-list');
+  const sizes = configData.hardwareSizes || [];
+  if (!sizes.length) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">📏</div>No hardware sizes configured yet</div>';
+    return;
+  }
+  list.innerHTML = sizes.map(s => `
+    <div class="item-card">
+      <div class="item-name">${s.type}</div>
+      <div class="item-detail">${s.sizes.join(', ')}</div>
+      <div class="item-actions">
+        <button class="btn-danger btn-small" onclick="confirmDeleteItem('Config - Hardware Sizes', '${s.type}')">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ════ PEOPLE ════
+async function addPerson() {
+  const name = document.getElementById('p-name').value.trim();
+  const role = document.getElementById('p-role').value.trim();
+  const type = document.getElementById('p-type').value;
+
+  if (!name) { showToast('Enter name', 'error'); return; }
+
+  const result = await callAPI('addPerson', { name, role, type });
+
+  if (result) {
+    document.getElementById('p-name').value = '';
+    document.getElementById('p-role').value = '';
+    await loadAllData();
+    showToast(result.message, 'success');
+  }
+}
+
+function renderPeople() {
+  const list = document.getElementById('people-list');
+  const people = configData.people || [];
+  if (!people.length) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">👥</div>No people configured yet</div>';
+    return;
+  }
+  list.innerHTML = people.map(p => `
+    <div class="item-card">
+      <div class="item-name">${p.name}</div>
+      <div class="item-detail">
+        <strong>Role:</strong> ${p.role}<br>
+        <span class="badge ${p.type === 'sales' ? 'badge-active' : ''}">${p.type}</span>
+      </div>
+      <div class="item-actions">
+        <button class="btn-danger btn-small" onclick="confirmDeleteItem('Config - People', '${p.name}')">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ════ PRODUCTS ════
+async function addProduct() {
+  const name = document.getElementById('pr-name').value.trim();
+  const category = document.getElementById('pr-category').value.trim();
+
+  if (!name) { showToast('Enter product name', 'error'); return; }
+
+  const result = await callAPI('addProduct', { name, category });
+
+  if (result) {
+    document.getElementById('pr-name').value = '';
+    document.getElementById('pr-category').value = '';
+    await loadAllData();
+    showToast(result.message, 'success');
+  }
+}
+
+function renderProducts() {
+  const list = document.getElementById('products-list');
+  const products = configData.products || [];
+  if (!products.length) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">📦</div>No products configured yet</div>';
+    return;
+  }
+  list.innerHTML = products.map(p => `
+    <div class="item-card">
+      <div class="item-name">${p.name}</div>
+      <div class="item-detail"><strong>Category:</strong> ${p.category}</div>
+      <div class="item-actions">
+        <button class="btn-danger btn-small" onclick="confirmDeleteItem('Config - Products', '${p.name}')">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ════ RENDER ALL ════
+function renderAllLists() {
+  renderFabrics();
+  renderColors();
+  renderSizes();
+  renderPeople();
+  renderProducts();
+}
+
+// ════ DELETE ════
+function confirmDeleteItem(sheetName, name) {
+  pendingDelete = { sheetName, name };
+  document.getElementById('confirm-message').textContent = `Delete "${name}"? This cannot be undone.`;
+  document.getElementById('confirm-modal').classList.add('active');
+}
+
+function closeConfirmModal() {
+  document.getElementById('confirm-modal').classList.remove('active');
+  pendingDelete = null;
+}
+
+async function confirmDelete() {
+  if (!pendingDelete) return;
+  const result = await callAPI('deleteConfigItem', pendingDelete);
+  if (result) {
+    await loadAllData();
+    showToast(result.message, 'success');
+  }
+  closeConfirmModal();
+}
+
+// ════ TOAST ════
+function showToast(msg, type = 'success') {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.className = 'toast ' + type + ' show';
+  setTimeout(() => toast.classList.remove('show'), 3200);
+}
+
+// Init
+loadAllData();
+</script>
+</body>
+</html>
