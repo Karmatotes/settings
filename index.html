@@ -1,794 +1,304 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KarmaTotes Settings Manager</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      padding: 20px;
-    }
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-      padding: 30px;
-    }
-    h1 {
-      color: #333;
-      margin-bottom: 10px;
-      font-size: 28px;
-    }
-    .subtitle { color: #666; font-size: 14px; margin-bottom: 25px; }
-    .tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 25px;
-      border-bottom: 2px solid #eee;
-      padding-bottom: 0;
-      overflow-x: auto;
-    }
-    .tab-btn {
-      padding: 12px 16px;
-      border: none;
-      background: none;
-      color: #999;
-      font-weight: 600;
-      cursor: pointer;
-      font-size: 14px;
-      border-bottom: 3px solid transparent;
-      transition: all 0.2s;
-      white-space: nowrap;
-    }
-    .tab-btn.active {
-      color: #667eea;
-      border-bottom-color: #667eea;
-    }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-    .section {
-      margin-bottom: 30px;
-      background: #f8f9fa;
-      padding: 20px;
-      border-radius: 8px;
-      border-left: 4px solid #667eea;
-    }
-    .section-title {
-      font-weight: 700;
-      color: #333;
-      font-size: 16px;
-      margin-bottom: 15px;
-    }
-    .table {
-      width: 100%;
-      border-collapse: collapse;
-      background: white;
-      border-radius: 6px;
-      overflow: hidden;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-    }
-    .table th {
-      background: #667eea;
-      color: white;
-      padding: 12px;
-      text-align: left;
-      font-weight: 600;
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .table td {
-      padding: 12px;
-      border-bottom: 1px solid #f0f0f0;
-      font-size: 13px;
-    }
-    .table tr:hover {
-      background: #f8f9fa;
-    }
-    .table tr:last-child td {
-      border-bottom: none;
-    }
-    .btn-delete {
-      padding: 6px 10px;
-      background: #e74c3c;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: 600;
-      transition: all 0.2s;
-    }
-    .btn-delete:hover {
-      background: #c0392b;
-    }
-    .btn-edit {
-      padding: 6px 10px;
-      background: #3498db;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: 600;
-      margin-right: 6px;
-      transition: all 0.2s;
-    }
-    .btn-edit:hover {
-      background: #2980b9;
-    }
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-      margin-bottom: 15px;
-    }
-    .form-row.full {
-      grid-template-columns: 1fr;
-    }
-    .form-group {
-      display: flex;
-      flex-direction: column;
-    }
-    .form-group label {
-      font-weight: 600;
-      color: #333;
-      margin-bottom: 6px;
-      font-size: 13px;
-    }
-    .form-control {
-      padding: 10px 12px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      font-size: 13px;
-      font-family: inherit;
-      transition: border-color 0.2s;
-    }
-    .form-control:focus {
-      outline: none;
-      border-color: #667eea;
-      box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
-    }
-    .form-hint {
-      font-size: 12px;
-      color: #999;
-      margin-top: 4px;
-      font-style: italic;
-    }
-    .button-row {
-      display: flex;
-      gap: 10px;
-      margin-top: 15px;
-    }
-    .btn {
-      padding: 10px 16px;
-      border: none;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .btn-primary {
-      background: #667eea;
-      color: white;
-    }
-    .btn-primary:hover {
-      background: #5568d3;
-      box-shadow: 0 4px 12px rgba(102,126,234,0.3);
-    }
-    .btn-secondary {
-      background: #f0f0f0;
-      color: #333;
-    }
-    .btn-secondary:hover {
-      background: #e0e0e0;
-    }
-    .success-msg {
-      color: #27ae60;
-      padding: 12px;
-      background: #d5f4e6;
-      border-radius: 6px;
-      margin-bottom: 15px;
-      display: none;
-      border-left: 4px solid #27ae60;
-    }
-    .error-msg {
-      color: #e74c3c;
-      padding: 12px;
-      background: #fadbd8;
-      border-radius: 6px;
-      margin-bottom: 15px;
-      display: none;
-      border-left: 4px solid #e74c3c;
-    }
-    .tag-input-wrap {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      background: white;
-      min-height: 40px;
-      align-items: center;
-    }
-    .tag {
-      background: #667eea;
-      color: white;
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 12px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .tag-remove {
-      cursor: pointer;
-      font-weight: bold;
-      opacity: 0.7;
-    }
-    .tag-remove:hover {
-      opacity: 1;
-    }
-    .tag-input {
-      border: none;
-      outline: none;
-      flex: 1;
-      min-width: 80px;
-      font-size: 13px;
-      padding: 4px;
-    }
-    .empty-state {
-      text-align: center;
-      padding: 40px 20px;
-      color: #999;
-    }
-    .empty-state-icon {
-      font-size: 48px;
-      margin-bottom: 15px;
-    }
-    .badge {
-      display: inline-block;
-      padding: 4px 8px;
-      background: #f0f3ff;
-      color: #667eea;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: 600;
-    }
-    .badge-designer {
-      background: #FDF4FF;
-      color: #7E22CE;
-    }
-    .info-box {
-      background: #E8F4F8;
-      border-left: 4px solid #3498db;
-      padding: 12px;
-      border-radius: 4px;
-      margin-bottom: 15px;
-      font-size: 13px;
-      color: #2c5aa0;
-    }
-    .info-box strong {
-      display: block;
-      margin-bottom: 4px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KarmaTotes Settings</title>
+<style>
+* {box-sizing: border-box; margin: 0; padding: 0;}
+body {font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; color: #333;}
+.container {max-width: 1200px; margin: 0 auto; padding: 20px;}
+header {background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 10px; margin-bottom: 30px;}
+header h1 {font-size: 28px; margin-bottom: 5px;}
+header p {opacity: 0.9; font-size: 14px;}
+.section {background: white; border-radius: 10px; padding: 25px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);}
+.section-title {font-size: 18px; font-weight: 600; margin-bottom: 20px; color: #333; border-bottom: 2px solid #667eea; padding-bottom: 10px;}
+table {width: 100%; border-collapse: collapse; margin-bottom: 20px;}
+th {background: #667eea; color: white; padding: 12px; text-align: left; font-weight: 600; font-size: 13px;}
+td {padding: 12px; border-bottom: 1px solid #eee;}
+tr:hover {background: #f9f9f9;}
+.badge {display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;}
+.badge-designer {background: #e8d5f2; color: #764ba2;}
+.input-group {margin-bottom: 15px;}
+.input-group label {display: block; margin-bottom: 5px; font-weight: 600; font-size: 13px; color: #555;}
+.input-group input, .input-group textarea {width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-family: inherit; font-size: 13px;}
+.input-group input:focus, .input-group textarea:focus {outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);}
+.form-row {display: grid; grid-template-columns: 1fr 1fr; gap: 15px;}
+.button {padding: 10px 16px; border: none; border-radius: 5px; font-weight: 600; cursor: pointer; font-size: 13px; transition: all 0.2s;}
+.button-primary {background: #667eea; color: white;}
+.button-primary:hover {background: #5568d3;}
+.button-danger {background: #e74c3c; color: white;}
+.button-danger:hover {background: #c0392b;}
+.button-secondary {background: #95a5a6; color: white;}
+.button-secondary:hover {background: #7f8c8d;}
+.action-buttons {display: flex; gap: 8px;}
+.form-hint {font-size: 12px; color: #999; margin-top: 5px; font-style: italic;}
+.empty-state {text-align: center; padding: 40px; color: #999;}
+.success {background: #d4edda; color: #155724; padding: 12px; border-radius: 5px; margin-bottom: 15px; border: 1px solid #c3e6cb;}
+.error {background: #f8d7da; color: #721c24; padding: 12px; border-radius: 5px; margin-bottom: 15px; border: 1px solid #f5c6cb;}
+</style>
 </head>
 <body>
 
 <div class="container">
-  <h1>⚙️ Settings Manager</h1>
-  <p class="subtitle">KarmaTotes Configuration & Database</p>
+  <header>
+    <h1>⚙️ KarmaTotes Settings</h1>
+    <p>Manage fabrics, variations, GSM options, and system configuration</p>
+  </header>
 
-  <div class="success-msg" id="success-msg"></div>
-  <div class="error-msg" id="error-msg"></div>
+  <!-- FABRICS SECTION -->
+  <div class="section">
+    <div class="section-title">📦 Fabrics & Variations</div>
+    <div id="message"></div>
+    <table>
+      <thead>
+        <tr>
+          <th>FABRIC NAME</th>
+          <th>VARIATIONS</th>
+          <th>GSM OPTIONS</th>
+          <th>ACTIONS</th>
+        </tr>
+      </thead>
+      <tbody id="fabrics-table">
+        <tr><td colspan="4" class="empty-state">Loading fabrics...</td></tr>
+      </tbody>
+    </table>
 
-  <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('fabrics')">🧵 Fabrics</button>
-    <button class="tab-btn" onclick="switchTab('people')">👥 People</button>
-    <button class="tab-btn" onclick="switchTab('products')">📦 Products</button>
-    <button class="tab-btn" onclick="switchTab('sync')">🔄 Sync Status</button>
-  </div>
-
-  <!-- FABRICS TAB -->
-  <div id="fabrics" class="tab-content active">
-    <div class="section">
-      <div class="section-title">📊 Fabric Configuration</div>
-      
-      <div class="info-box">
-        <strong>✨ NEW: Designer Fabrics</strong>
-        Designer - Kalamkari and Designer - Ikat are now available! These fabrics don't require variation/GSM selection — users just enter a custom Pattern name (e.g., "Peacock Paradise").
-      </div>
-
-      <div class="table-wrap">
-        <table class="table" id="fabrics-table">
-          <thead>
-            <tr>
-              <th style="width: 25%">Fabric Name</th>
-              <th style="width: 35%">Variations</th>
-              <th style="width: 25%">GSM Options</th>
-              <th style="width: 15%">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="fabrics-tbody"></tbody>
-        </table>
-      </div>
-
-      <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #ddd;">
-        <div class="section-title" style="margin-bottom: 15px">Add New Fabric</div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Fabric Name <span style="color: #e74c3c">*</span></label>
-            <input class="form-control" id="f-fabric-name" placeholder="e.g. Designer - Jacquard">
-            <div class="form-hint">Leave blank variations/GSM for Designer fabrics</div>
-          </div>
+    <!-- ADD NEW FABRIC -->
+    <div style="border-top: 1px solid #eee; padding-top: 20px;">
+      <h3 style="margin-bottom: 15px; font-size: 16px;">➕ Add New Fabric</h3>
+      <div class="form-row">
+        <div class="input-group">
+          <label>Fabric Name *</label>
+          <input type="text" id="fabric-name" placeholder="e.g. Kalamkari Fabric">
+          <div class="form-hint">Leave blank for Designer fabrics</div>
         </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Variations (comma-separated)</label>
-            <input class="form-control" id="f-fabric-vars" placeholder="e.g. Natural, Colored, Printed">
-            <div class="form-hint">Leave blank if no variations needed</div>
-          </div>
-          <div class="form-group">
-            <label>GSM Options (comma-separated)</label>
-            <input class="form-control" id="f-fabric-gsm" placeholder="e.g. 225, 300, 400">
-            <div class="form-hint">Leave blank if no GSM selection needed</div>
-          </div>
-        </div>
-        <div class="button-row">
-          <button class="btn btn-primary" onclick="addFabric()">➕ Add Fabric</button>
+        <div class="input-group">
+          <label>Variations (comma-separated)</label>
+          <input type="text" id="fabric-variations" placeholder="e.g. Half-White, Natural, Printed">
+          <div class="form-hint">Leave blank if no variations</div>
         </div>
       </div>
+      <div class="input-group">
+        <label>GSM Options (comma-separated)</label>
+        <input type="text" id="fabric-gsm" placeholder="e.g. 90, 120, 135, 150">
+        <div class="form-hint">Leave blank if no GSM selection needed</div>
+      </div>
+      <button class="button button-primary" onclick="addFabric()">✓ Add Fabric</button>
     </div>
   </div>
 
-  <!-- PEOPLE TAB -->
-  <div id="people" class="tab-content">
-    <div class="section">
-      <div class="section-title">👥 Team Members</div>
+  <!-- SALES REPS SECTION -->
+  <div class="section">
+    <div class="section-title">👥 Sales Representatives</div>
+    <table>
+      <thead>
+        <tr>
+          <th>NAME</th>
+          <th>TYPE</th>
+          <th>ACTIONS</th>
+        </tr>
+      </thead>
+      <tbody id="people-table">
+        <tr><td colspan="3" class="empty-state">Loading...</td></tr>
+      </tbody>
+    </table>
 
-      <div class="table-wrap">
-        <table class="table" id="people-table">
-          <thead>
-            <tr>
-              <th style="width: 30%">Name</th>
-              <th style="width: 30%">Role</th>
-              <th style="width: 40%">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="people-tbody"></tbody>
-        </table>
+    <div style="border-top: 1px solid #eee; padding-top: 20px;">
+      <h3 style="margin-bottom: 15px; font-size: 16px;">➕ Add Sales Rep</h3>
+      <div class="input-group">
+        <label>Name *</label>
+        <input type="text" id="person-name" placeholder="e.g. Sridevi">
       </div>
-
-      <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #ddd;">
-        <div class="section-title" style="margin-bottom: 15px">Add Team Member</div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Name <span style="color: #e74c3c">*</span></label>
-            <input class="form-control" id="f-person-name" placeholder="Enter name">
-          </div>
-          <div class="form-group">
-            <label>Role <span style="color: #e74c3c">*</span></label>
-            <select class="form-control" id="f-person-role">
-              <option value="">Select role…</option>
-              <option value="sales">Sales Representative</option>
-              <option value="worker">Worker</option>
-              <option value="supervisor">Supervisor</option>
-              <option value="manager">Manager</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
-        </div>
-        <div class="button-row">
-          <button class="btn btn-primary" onclick="addPerson()">➕ Add Member</button>
-        </div>
-      </div>
+      <button class="button button-primary" onclick="addPerson()">✓ Add Person</button>
     </div>
   </div>
 
-  <!-- PRODUCTS TAB -->
-  <div id="products" class="tab-content">
-    <div class="section">
-      <div class="section-title">📦 Product Types</div>
-
-      <div class="table-wrap">
-        <table class="table" id="products-table">
-          <thead>
-            <tr>
-              <th style="width: 50%">Product Name</th>
-              <th style="width: 50%">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="products-tbody"></tbody>
-        </table>
-      </div>
-
-      <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #ddd;">
-        <div class="section-title" style="margin-bottom: 15px">Add New Product</div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Product Name <span style="color: #e74c3c">*</span></label>
-            <input class="form-control" id="f-product-name" placeholder="e.g. Duffle Bag, Backpack">
-          </div>
-        </div>
-        <div class="button-row">
-          <button class="btn btn-primary" onclick="addProduct()">➕ Add Product</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SYNC STATUS TAB -->
-  <div id="sync" class="tab-content">
-    <div class="section">
-      <div class="section-title">🔄 Configuration Sync Status</div>
-
-      <div class="info-box">
-        <strong>How It Works</strong>
-        Settings are stored in Google Sheets and automatically synced to all Master Entry, Production Tracker, and Stock Tracker instances. When you add/edit fabrics, people, or products here, they appear in all tools within seconds.
-      </div>
-
-      <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 6px; border-left: 4px solid #27ae60;">
-        <div style="font-weight: 600; color: #27ae60; margin-bottom: 8px">✅ Connected Tools</div>
-        <ul style="list-style: none; font-size: 13px; color: #333; line-height: 1.8">
-          <li>✓ Master Entry (Orders)</li>
-          <li>✓ Production Tracker (Order Status)</li>
-          <li>✓ Stock Tracker (Inventory)</li>
-          <li>✓ Finance Tracker (Costs)</li>
-        </ul>
-      </div>
-
-      <div style="margin-top: 15px; padding: 15px; background: white; border-radius: 6px; border-left: 4px solid #667eea;">
-        <div style="font-weight: 600; color: #667eea; margin-bottom: 8px">📊 Current Configuration</div>
-        <div style="font-size: 13px; color: #333; line-height: 1.8">
-          <div>Total Fabrics: <strong id="stat-fabrics">0</strong></div>
-          <div>Team Members: <strong id="stat-people">0</strong></div>
-          <div>Product Types: <strong id="stat-products">0</strong></div>
-          <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #f0f0f0;">
-            Last Updated: <strong id="stat-updated">Loading…</strong>
-          </div>
-        </div>
-      </div>
-
-      <div style="margin-top: 20px;">
-        <button class="btn btn-primary" onclick="refreshConfig()">🔄 Refresh Config</button>
-      </div>
-    </div>
-  </div>
 </div>
 
 <script>
-  const CONFIG_URL = 'https://script.google.com/macros/s/AKfycbxRr3o5M_bYR3V9oZf2qMH0-Hrp13qP_PcA7h-1KddIPx6TzfMzY6KoYnTMxaa8mnSa/exec';
+const CONFIG_URL = "https://script.google.com/macros/s/AKfycbxRr3o5M_bYR3V9oZf2qMH0-Hrp13qP_PcA7h-1KddIPx6TzfMzY6KoYnTMxaa8mnSa/exec";
 
-  let configData = null;
-
-  async function initApp() {
-    await loadConfig();
-  }
-
-  async function loadConfig() {
-    try {
-      const resp = await fetch(`${CONFIG_URL}?action=getConfig`);
-      const data = await resp.json();
-      if (data) {
-        configData = data;
-        renderFabrics();
-        renderPeople();
-        renderProducts();
-        updateStats();
-      }
-    } catch (err) {
-      showError('Failed to load config: ' + err.message);
-      console.error('Load error:', err);
+async function loadConfig() {
+  try {
+    const response = await fetch(`${CONFIG_URL}?action=getConfig`);
+    const data = await response.json();
+    
+    if (data.fabrics) {
+      renderFabrics(data.fabrics);
     }
-  }
-
-  function renderFabrics() {
-    const tbody = document.getElementById('fabrics-tbody');
-    tbody.innerHTML = '';
-
-    if (!configData || !configData.fabrics || configData.fabrics.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#999;padding:30px">No fabrics configured</td></tr>';
-      return;
+    if (data.people) {
+      renderPeople(data.people);
     }
+  } catch (err) {
+    console.error('Failed to load config:', err);
+    showMessage('Failed to load configuration', 'error');
+  }
+}
 
-    configData.fabrics.forEach((fab, idx) => {
-      const tr = document.createElement('tr');
-      
-      const isDesigner = fab.name.includes('Designer');
-      const nameBadge = isDesigner ? `<span class="badge badge-designer">✨ ${fab.name}</span>` : `<strong>${fab.name}</strong>`;
-      
-      tr.innerHTML = `
-        <td>${nameBadge}</td>
-        <td>${fab.variations && fab.variations.length > 0 ? fab.variations.join(', ') : '—'}</td>
-        <td>${fab.gsm && fab.gsm.length > 0 ? fab.gsm.join(', ') : '—'}</td>
-        <td>
-          <button class="btn-edit" onclick="editFabric(${idx})">Edit</button>
-          <button class="btn-delete" onclick="deleteFabric(${idx})">Delete</button>
-        </td>
-      `;
-      tbody.appendChild(tr);
+function renderFabrics(fabrics) {
+  const tbody = document.getElementById('fabrics-table');
+  if (!fabrics || fabrics.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No fabrics configured</td></tr>';
+    return;
+  }
+  
+  tbody.innerHTML = fabrics.map((f, idx) => `
+    <tr>
+      <td>
+        ${f.name === 'Designer Fabric' ? '✨ ' : ''}${f.name}
+        ${f.name === 'Designer Fabric' ? '<span class="badge badge-designer">Designer</span>' : ''}
+      </td>
+      <td>${f.variations && f.variations.length ? f.variations.join(', ') : '—'}</td>
+      <td>${f.gsm && f.gsm.length ? f.gsm.join(', ') : '—'}</td>
+      <td>
+        <div class="action-buttons">
+          <button class="button button-secondary" onclick="editFabric(${idx})">Edit</button>
+          <button class="button button-danger" onclick="deleteFabric('${f.name}')">Delete</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function renderPeople(people) {
+  const tbody = document.getElementById('people-table');
+  if (!people || people.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="3" class="empty-state">No people configured</td></tr>';
+    return;
+  }
+  
+  tbody.innerHTML = people.map((p, idx) => `
+    <tr>
+      <td>${p.name}</td>
+      <td><span style="color: #666; font-size: 12px;">${p.type || 'staff'}</span></td>
+      <td>
+        <button class="button button-danger" onclick="deletePerson('${p.name}')">Delete</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+async function addFabric() {
+  const name = document.getElementById('fabric-name').value.trim();
+  const variations = document.getElementById('fabric-variations').value.split(',').map(v => v.trim()).filter(v => v);
+  const gsm = document.getElementById('fabric-gsm').value.split(',').map(g => g.trim()).filter(g => g);
+  
+  if (!name) {
+    showMessage('Fabric name is required', 'error');
+    return;
+  }
+  
+  try {
+    const response = await fetch(CONFIG_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'addFabric',
+        name,
+        variations,
+        gsm
+      })
     });
-  }
-
-  function renderPeople() {
-    const tbody = document.getElementById('people-tbody');
-    tbody.innerHTML = '';
-
-    if (!configData || !configData.people || configData.people.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#999;padding:30px">No team members configured</td></tr>';
-      return;
+    const data = await response.json();
+    
+    if (data.success) {
+      showMessage('✓ Fabric added successfully', 'success');
+      document.getElementById('fabric-name').value = '';
+      document.getElementById('fabric-variations').value = '';
+      document.getElementById('fabric-gsm').value = '';
+      loadConfig();
+    } else {
+      showMessage('Error: ' + data.error, 'error');
     }
-
-    configData.people.forEach((person, idx) => {
-      const tr = document.createElement('tr');
-      const roleLabel = {
-        'sales': '💼 Sales Rep',
-        'worker': '🔧 Worker',
-        'supervisor': '👨‍💼 Supervisor',
-        'manager': '👔 Manager',
-        'other': '👤 Other'
-      }[person.type] || person.type;
-
-      tr.innerHTML = `
-        <td><strong>${person.name}</strong></td>
-        <td>${roleLabel}</td>
-        <td>
-          <button class="btn-edit" onclick="editPerson(${idx})">Edit</button>
-          <button class="btn-delete" onclick="deletePerson(${idx})">Delete</button>
-        </td>
-      `;
-      tbody.appendChild(tr);
-    });
+  } catch (err) {
+    showMessage('Failed to add fabric', 'error');
   }
+}
 
-  function renderProducts() {
-    const tbody = document.getElementById('products-tbody');
-    tbody.innerHTML = '';
+async function editFabric(idx) {
+  alert('Edit functionality coming soon. For now, delete and re-add the fabric.');
+}
 
-    if (!configData || !configData.products || configData.products.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;color:#999;padding:30px">No products configured</td></tr>';
-      return;
-    }
-
-    configData.products.forEach((prod, idx) => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td><strong>${prod.name}</strong></td>
-        <td>
-          <button class="btn-edit" onclick="editProduct(${idx})">Edit</button>
-          <button class="btn-delete" onclick="deleteProduct(${idx})">Delete</button>
-        </td>
-      `;
-      tbody.appendChild(tr);
-    });
-  }
-
-  async function addFabric() {
-    const name = document.getElementById('f-fabric-name').value.trim();
-    if (!name) {
-      showError('Please enter fabric name');
-      return;
-    }
-
-    const varsInput = document.getElementById('f-fabric-vars').value.trim();
-    const gsmInput = document.getElementById('f-fabric-gsm').value.trim();
-
-    const variations = varsInput ? varsInput.split(',').map(v => v.trim()).filter(v => v) : [];
-    const gsm = gsmInput ? gsmInput.split(',').map(g => g.trim()).filter(g => g) : [];
-
-    try {
-      const resp = await fetch(CONFIG_URL, {
-        method: 'POST',
-        body: JSON.stringify({
-          action: 'addFabric',
-          name: name,
-          variations: variations,
-          gsm: gsm
-        })
-      });
-      const data = await resp.json();
-      if (data.success) {
-        showSuccess('✅ Fabric added successfully!');
-        document.getElementById('f-fabric-name').value = '';
-        document.getElementById('f-fabric-vars').value = '';
-        document.getElementById('f-fabric-gsm').value = '';
-        await loadConfig();
-      } else {
-        showError('Error: ' + (data.error || 'Unknown error'));
-      }
-    } catch (err) {
-      showError('Error: ' + err.message);
-    }
-  }
-
-  function deleteFabric(idx) {
-    if (!confirm('Are you sure? This cannot be undone.')) return;
-
-    fetch(CONFIG_URL, {
+async function deleteFabric(name) {
+  if (!confirm(`Delete fabric "${name}"?`)) return;
+  
+  try {
+    const response = await fetch(CONFIG_URL, {
       method: 'POST',
       body: JSON.stringify({
         action: 'deleteFabric',
-        index: idx
+        name
       })
-    })
-    .then(r => r.json())
-    .then(data => {
-      if (data.success) {
-        showSuccess('✅ Fabric deleted');
-        loadConfig();
-      } else {
-        showError('Error: ' + (data.error || 'Unknown'));
-      }
-    })
-    .catch(err => showError('Error: ' + err.message));
-  }
-
-  function editFabric(idx) {
-    const fab = configData.fabrics[idx];
-    document.getElementById('f-fabric-name').value = fab.name;
-    document.getElementById('f-fabric-vars').value = (fab.variations || []).join(', ');
-    document.getElementById('f-fabric-gsm').value = (fab.gsm || []).join(', ');
-  }
-
-  async function addPerson() {
-    const name = document.getElementById('f-person-name').value.trim();
-    const role = document.getElementById('f-person-role').value;
-
-    if (!name || !role) {
-      showError('Please fill in all fields');
-      return;
+    });
+    const data = await response.json();
+    
+    if (data.success) {
+      showMessage('✓ Fabric deleted', 'success');
+      loadConfig();
     }
-
-    try {
-      const resp = await fetch(CONFIG_URL, {
-        method: 'POST',
-        body: JSON.stringify({
-          action: 'addPerson',
-          name: name,
-          type: role
-        })
-      });
-      const data = await resp.json();
-      if (data.success) {
-        showSuccess('✅ Team member added!');
-        document.getElementById('f-person-name').value = '';
-        document.getElementById('f-person-role').value = '';
-        await loadConfig();
-      } else {
-        showError('Error: ' + (data.error || 'Unknown error'));
-      }
-    } catch (err) {
-      showError('Error: ' + err.message);
-    }
+  } catch (err) {
+    showMessage('Failed to delete fabric', 'error');
   }
+}
 
-  function deletePerson(idx) {
-    if (!confirm('Are you sure? This cannot be undone.')) return;
+async function addPerson() {
+  const name = document.getElementById('person-name').value.trim();
+  
+  if (!name) {
+    showMessage('Name is required', 'error');
+    return;
+  }
+  
+  try {
+    const response = await fetch(CONFIG_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'addPerson',
+        name,
+        type: 'sales'
+      })
+    });
+    const data = await response.json();
+    
+    if (data.success) {
+      showMessage('✓ Person added successfully', 'success');
+      document.getElementById('person-name').value = '';
+      loadConfig();
+    }
+  } catch (err) {
+    showMessage('Failed to add person', 'error');
+  }
+}
 
-    fetch(CONFIG_URL, {
+async function deletePerson(name) {
+  if (!confirm(`Delete person "${name}"?`)) return;
+  
+  try {
+    const response = await fetch(CONFIG_URL, {
       method: 'POST',
       body: JSON.stringify({
         action: 'deletePerson',
-        index: idx
+        name
       })
-    })
-    .then(r => r.json())
-    .then(data => {
-      if (data.success) {
-        showSuccess('✅ Team member deleted');
-        loadConfig();
-      } else {
-        showError('Error: ' + (data.error || 'Unknown'));
-      }
-    })
-    .catch(err => showError('Error: ' + err.message));
-  }
-
-  function editPerson(idx) {
-    const person = configData.people[idx];
-    document.getElementById('f-person-name').value = person.name;
-    document.getElementById('f-person-role').value = person.type;
-  }
-
-  async function addProduct() {
-    const name = document.getElementById('f-product-name').value.trim();
-    if (!name) {
-      showError('Please enter product name');
-      return;
+    });
+    const data = await response.json();
+    
+    if (data.success) {
+      showMessage('✓ Person deleted', 'success');
+      loadConfig();
     }
-
-    try {
-      const resp = await fetch(CONFIG_URL, {
-        method: 'POST',
-        body: JSON.stringify({
-          action: 'addProduct',
-          name: name
-        })
-      });
-      const data = await resp.json();
-      if (data.success) {
-        showSuccess('✅ Product added!');
-        document.getElementById('f-product-name').value = '';
-        await loadConfig();
-      } else {
-        showError('Error: ' + (data.error || 'Unknown error'));
-      }
-    } catch (err) {
-      showError('Error: ' + err.message);
-    }
+  } catch (err) {
+    showMessage('Failed to delete person', 'error');
   }
+}
 
-  function deleteProduct(idx) {
-    if (!confirm('Are you sure? This cannot be undone.')) return;
+function showMessage(msg, type) {
+  const el = document.getElementById('message');
+  el.innerHTML = `<div class="${type}">${msg}</div>`;
+  setTimeout(() => { el.innerHTML = ''; }, 4000);
+}
 
-    fetch(CONFIG_URL, {
-      method: 'POST',
-      body: JSON.stringify({
-        action: 'deleteProduct',
-        index: idx
-      })
-    })
-    .then(r => r.json())
-    .then(data => {
-      if (data.success) {
-        showSuccess('✅ Product deleted');
-        loadConfig();
-      } else {
-        showError('Error: ' + (data.error || 'Unknown'));
-      }
-    })
-    .catch(err => showError('Error: ' + err.message));
-  }
-
-  function editProduct(idx) {
-    const prod = configData.products[idx];
-    document.getElementById('f-product-name').value = prod.name;
-  }
-
-  function updateStats() {
-    document.getElementById('stat-fabrics').textContent = (configData.fabrics || []).length;
-    document.getElementById('stat-people').textContent = (configData.people || []).length;
-    document.getElementById('stat-products').textContent = (configData.products || []).length;
-    document.getElementById('stat-updated').textContent = new Date().toLocaleString();
-  }
-
-  function refreshConfig() {
-    loadConfig();
-    showSuccess('✅ Config refreshed');
-  }
-
-  function switchTab(tab) {
-    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById(tab).classList.add('active');
-    event.target.classList.add('active');
-  }
-
-  function showSuccess(msg) {
-    const el = document.getElementById('success-msg');
-    el.textContent = msg;
-    el.style.display = 'block';
-    setTimeout(() => el.style.display = 'none', 3000);
-  }
-
-  function showError(msg) {
-    const el = document.getElementById('error-msg');
-    el.textContent = msg;
-    el.style.display = 'block';
-    setTimeout(() => el.style.display = 'none', 4000);
-  }
-
-  // Initialize
-  initApp();
+loadConfig();
 </script>
 
 </body>
